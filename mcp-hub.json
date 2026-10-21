@@ -7,6 +7,10 @@
       "args": ["/c", "npx", "-y", "@azure-devops/mcp", "Loyalstar", "--authentication", "azcli",
                "-d", "core", "work", "work-items", "search", "repositories", "pipelines", "wiki"],
       "env": { "ado_mcp_project": "OddsPark", "ado_mcp_team": "OP - Project Team" }
+    },
+    "gitkraken": {
+      "command": "C:/Users/TienNguyenHuynhMinh/AppData/Roaming/Cursor/User/globalStorage/eamodio.gitlens/gk.exe",
+      "args": ["mcp", "--host=claude-cli", "--source=gitlens", "--scheme=cursor"]
     }
   }
 }

@@ -40,7 +40,7 @@ async function start() {
   { detached: true, stdio: ['ignore', log, log], windowsHide: true });
   child.unref();
   writeFileSync(PID_FILE, String(child.pid));
-  for (let i = 0; i < 60; i++) {
+  for (let i = 0; i < 180; i++) { // up to 90s: all servers load before the port opens
     if (await listening()) return console.log(`started (pid ${child.pid}) -> ${url}`);
     if (!alive(child.pid)) break;
     await new Promise((r) => setTimeout(r, 500));
