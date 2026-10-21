@@ -16,6 +16,34 @@ With the hub, the servers run once and each session connects to `http://127.0.0.
 
 Node.js 18+ and npm. Nothing else (no Docker).
 
+## Where 1mcp is installed
+
+1mcp (`@1mcp/agent`) is a **local dependency** of this folder, not a global tool:
+
+| Item | Location |
+|---|---|
+| Package (pinned `0.39.3`) | `D:\TienNHM\mcp-hub\node_modules\@1mcp\agent` |
+| CLI | run from this folder: `npx --no-install 1mcp <command>` (verified) |
+| Runtime data (pid, log, sessions, generated config) | `D:\TienNHM\mcp-hub\.run\` |
+
+Install / upgrade:
+
+```bash
+npm install                      # installs the pinned version
+# upgrade: edit the version in package.json, then
+npm install && node hub.mjs restart
+```
+
+Optional, to type `1mcp ...` from any folder: `npm install -g @1mcp/agent@0.39.3`
+(not needed for the hub; the global CLI would not know this hub's `.run` folder unless you pass `-d`/`-c`).
+
+Useful CLI checks (run in this folder; `-d`/`-c` point the CLI at this hub's data):
+
+```bash
+npx --no-install 1mcp serve --status -d D:/TienNHM/mcp-hub/.run/agent -c D:/TienNHM/mcp-hub/.run/mcp.json
+npx --no-install 1mcp --help      # all commands: mcp, preset, inspect, run, admin, ...
+```
+
 ## Quick start
 
 ```bash
@@ -52,6 +80,38 @@ Then open a new Claude session. Check with `/mcp`: `hub` should be connected.
 | `node hub.mjs connect` | Print the `claude mcp add` command |
 | `node hub.mjs autostart-on` | Start at Windows logon (Task Scheduler task `McpHub`) |
 | `node hub.mjs autostart-off` | Remove that task |
+
+## Admin web UI
+
+URL: **http://127.0.0.1:8800/admin** (`/` redirects there). The page title is "1MCP Admin Console".
+The hub must be running (`node hub.mjs status`).
+
+### First time: create the admin account (required once)
+
+The UI is locked until an admin account exists. Opening `/admin` first shows
+**"Setup required - NO ADMIN ACCOUNT"** and a `1mcp admin bootstrap ...` command.
+The browser cannot create the account; do it in a terminal on this machine:
+
+```bash
+cd D:\TienNHM\mcp-hub
+npx --no-install 1mcp admin bootstrap -d D:/TienNHM/mcp-hub/.run/agent -c D:/TienNHM/mcp-hub/.run/mcp.json --username <your-name> --password '<long-random-password>'
+```
+
+- `operator` / `use-a-long-random-password` on the page are only examples. Choose your own and keep the password in a password manager.
+- Then refresh `/admin` and sign in. If bootstrap says it cannot find the runtime, check `-d`/`-c` match the `serve --status` command above.
+
+Related CLI (same flags): `1mcp admin login | status | logout` (CLI sessions; `--context local` is required for these).
+
+### What the UI is for
+
+Management console of the hub (the OAuth management page is at `/admin/oauth`).
+**The source of truth for which servers run is `mcp-hub.json`**: `start` regenerates `.run/mcp.json` from it,
+so edit `mcp-hub.json` for permanent changes.
+
+> TODO (not verified yet): page-by-page tour of the UI after login. Sign in once, then add screenshots
+> and notes here.
+
+Important: the admin account protects the **UI only**. The MCP endpoint `http://127.0.0.1:8800/mcp` still has no authentication.
 
 ## Configure servers
 
