@@ -1,0 +1,12 @@
+{
+  "port": 8800,
+  "host": "127.0.0.1",
+  "mcpServers": {
+    "azure-devops": {
+      "command": "cmd",
+      "args": ["/c", "npx", "-y", "@azure-devops/mcp", "Loyalstar", "--authentication", "azcli",
+               "-d", "core", "work", "work-items", "search", "repositories", "pipelines", "wiki"],
+      "env": { "ado_mcp_project": "OddsPark", "ado_mcp_team": "OP - Project Team" }
+    }
+  }
+}
