@@ -97,6 +97,9 @@ cd D:\TienNHM\mcp-hub
 npx --no-install 1mcp admin bootstrap -d D:/TienNHM/mcp-hub/.run/agent -c D:/TienNHM/mcp-hub/.run/mcp.json --username <your-name> --password '<long-random-password>'
 ```
 
+- **Do not run the bare command shown on the page** (`1mcp admin bootstrap --username ...`). Without `-d`/`-c` it creates the
+  account in `%APPDATA%\1mcp`, not in this hub's data folder (`.run`), and `/admin` keeps showing "NO ADMIN ACCOUNT".
+  (Seen in practice. Fix: re-run with the flags above; the stray `%APPDATA%\1mcp` folder can be deleted.)
 - `operator` / `use-a-long-random-password` on the page are only examples. Choose your own and keep the password in a password manager.
 - Then refresh `/admin` and sign in. If bootstrap says it cannot find the runtime, check `-d`/`-c` match the `serve --status` command above.
 
