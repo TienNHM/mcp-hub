@@ -105,14 +105,34 @@ npx --no-install 1mcp admin bootstrap -d D:/TienNHM/mcp-hub/.run/agent -c D:/Tie
 
 Related CLI (same flags): `1mcp admin login | status | logout` (CLI sessions; `--context local` is required for these).
 
-### What the UI is for
+### Sign in / out
 
-Management console of the hub (the OAuth management page is at `/admin/oauth`).
-**The source of truth for which servers run is `mcp-hub.json`**: `start` regenerates `.run/mcp.json` from it,
-so edit `mcp-hub.json` for permanent changes.
+Open `/admin`, enter the username and password you chose in bootstrap, press **Log in**.
+After login the top bar shows `Runtime online`, the version and your username; the icon at the far right is **log out**.
+The session is per browser (logging in with Chrome does not log in other browsers).
 
-> TODO (not verified yet): page-by-page tour of the UI after login. Sign in once, then add screenshots
-> and notes here.
+### Page tour (left menu)
+
+Everything below was checked by opening each page; only reading was done, nothing was changed.
+
+| Menu | URL | What you see / use it for |
+|---|---|---|
+| **Overview** | `/admin` | Health summary. Counters: Enabled servers, Disabled servers, OAuth attention, Failed audits. "Needs attention" lists problems (or "No action required"). "Runtime identity": version, external URL, runtime scope id (each with a Copy button). First place to look when something is wrong. |
+| **Server inventory** | `/admin/servers` | Table of servers in the hub: name, status (ENABLED), transport/command (secrets are masked, e.g. `--authentication REDACTED`), number of secrets, and a toggle to enable/disable. Filters: All / Enabled / Disabled and Static / Template, plus a search box. Buttons: pencil (edit a server), **Configure Custom Server** (add one). |
+| **Presets** | `/admin/presets` | Presets = named filters that expose only some servers, chosen by **tags**. Create with a name (letters, numbers, `-`, `_`, max 50) and tag rules (match any / match all, include / exclude); "Preview matches" shows which servers would match before saving. Only useful once servers have tags. Empty for now. |
+| **Instructions** | `/admin/instructions` | Instruction templates sent to new clients (an "Initialization" text and a "CLI" text). Built-in `default` is active. You can draft your own, validate, preview and activate it. Safe to ignore. |
+| **OAuth services** | `/admin/oauth` | OAuth state per server. `azure-devops` shows **CONNECTED / No OAuth action required** (it uses `az login`, not OAuth). Relevant only for servers that need a browser OAuth sign-in. |
+| **Audit trail** | `/admin/audit` | Redacted log of admin actions done through the UI. Empty until someone changes something. |
+| **Backend logs** | `/admin/logs` | Live stderr of each managed server (here `azure-devops`: its start line shows the org and enabled domains). Use it to see why a server did not start. |
+| **About** | `/admin/about` | Versions (runtime and UI `0.39.3`), runtime scope id, external URL, links to the project. |
+
+### Daily use
+
+- Check the hub is healthy: Overview shows **Runtime online** and `Enabled servers = N`.
+- A tool is missing in Claude: Server inventory (is it ENABLED?) then Backend logs (why did it fail?).
+- Temporarily turn a server off: toggle in Server inventory.
+- **Permanent changes: edit `mcp-hub.json`.** `node hub.mjs start` regenerates `.run/mcp.json` from `mcp-hub.json`,
+  so a server added or changed only in the UI can be overwritten by the next `start`.
 
 Important: the admin account protects the **UI only**. The MCP endpoint `http://127.0.0.1:8800/mcp` still has no authentication.
 
